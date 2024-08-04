@@ -1,36 +1,36 @@
-type Executor<T> = (resolve: (value: T | PromiseLike<T>) => void, reject: (reason?: any) => void) => void;
+type Executor<T> = (resolve: (value: T | PromiseLike<T>) => void, reject: (reason?: any) => void) => void
 
 class MyPromise<T> {
-    private state: 'pending' | 'fulfilled' | 'rejected' = 'pending';
-    private value: T | undefined;
-    private reason: any;
-    private onFulfilledCallbacks: Array<(value: T) => void> = [];
-    private onRejectedCallbacks: Array<(reason: any) => void> = [];
+    private state: 'pending' | 'fulfilled' | 'rejected' = 'pending'
+    private value: T | undefined
+    private reason: any
+    private onFulfilledCallbacks: Array<(value: T) => void> = []
+    private onRejectedCallbacks: Array<(reason: any) => void> = []
 
     constructor(executor: Executor<T>) {
         //PromiseA+ 2.1
         const resolve = (value: T | PromiseLike<T>) => {
             if (this.state === 'pending') {
-                this.state = 'fulfilled';
-                this.value = value as T;
+                this.state = 'fulfilled'
+                this.value = value as T
                 //PromiseA+ 2.2.6.1
-                this.onFulfilledCallbacks.forEach(callback => callback(this.value as T));
+                this.onFulfilledCallbacks.forEach(callback => callback(this.value as T))
             }
-        };
+        }
 
         const reject = (reason: any) => {
             if (this.state === 'pending') {
-                this.state = 'rejected';
-                this.reason = reason;
+                this.state = 'rejected'
+                this.reason = reason
                 //PromiseA+ 2.2.6.2
-                this.onRejectedCallbacks.forEach(callback => callback(this.reason));
+                this.onRejectedCallbacks.forEach(callback => callback(this.reason))
             }
-        };
+        }
 
         try {
-            executor(resolve, reject);
+            executor(resolve, reject)
         } catch (error) {
-            reject(error);
+            reject(error)
         }
     }
 
@@ -54,7 +54,7 @@ class MyPromise<T> {
                     //PromiseA+ 2.2.7.2
                     reject(e)
                 }
-            });
+            })
         } else if (this.state === 'rejected') {
             //PromiseA+ 2.2.3
             setTimeout(() => {
@@ -64,7 +64,7 @@ class MyPromise<T> {
                 } catch (e) {
                     reject(e)
                 }
-            });
+            })
         } else if (this.state === 'pending') {
             this.onFulfilledCallbacks.push(() => {
                 setTimeout(() => {
@@ -79,16 +79,16 @@ class MyPromise<T> {
             this.onRejectedCallbacks.push(() => {
                 setTimeout(() => {
                     try {
-                        let x = onRejected(this.reason);
-                        this.resolvePromise(promise2, x, resolve, reject);
+                        let x = onRejected(this.reason)
+                        this.resolvePromise(promise2, x, resolve, reject)
                     } catch (e) {
-                        reject(e);
+                        reject(e)
                     }
-                });
-            });
+                })
+            })
         }
-        });
-        return promise2;
+        })
+        return promise2
     }
     private resolvePromise(promise2: MyPromise<T>, x: any, resolve: any, reject:any) {
         //PromiseA+ 2.3.1
@@ -99,7 +99,7 @@ class MyPromise<T> {
             //PromiseA+2.3.3.3.3
             let used: boolean = false
             try {
-                let then = x.then;
+                let then = x.then
                 if (typeof then === 'function') {
                     //PromiseA+2.3.3
                     then.call(x, (y: any) => {
@@ -133,4 +133,4 @@ class MyPromise<T> {
     }
 }
 
-export default MyPromise;
+export default MyPromise
