@@ -1,0 +1,19 @@
+{
+  "name": "promise-test",
+  "version": "1.0.0",
+  "description": "test promise with ts",
+  "main": "mypromise.ts",
+  "scripts": {
+    "test": "npx tsc && node dist/test.js"
+  },
+  "keywords": [
+    "promise"
+  ],
+  "author": "zp",
+  "license": "ISC",
+  "dependencies": {
+    "promises-aplus-tests": "^2.1.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  }
+}
